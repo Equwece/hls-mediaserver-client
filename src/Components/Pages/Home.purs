@@ -9,8 +9,8 @@ import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Halogen as H
 import Halogen.HTML as HH
-import Type.Proxy (Proxy(..))
 import Types.Message (RootMessage(..))
+import Type.Proxy (Proxy(..))
 
 type Slots = ( 
   previewContainer :: forall query. H.Slot query PreviewContainerOutput Int 
@@ -30,7 +30,7 @@ homeComponent =
 
     render :: input -> H.ComponentHTML HomeComponentActions Slots m
     render _ = HH.div_ [
-      HH.slot (Proxy :: _ "previewContainer") 0 previewContainer unit HandlePreviewContainer
+      HH.slot (Proxy :: _ "previewContainer") 6 previewContainer unit HandlePreviewContainer
     ]
 
     handleAction = do

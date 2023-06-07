@@ -2,20 +2,17 @@ module Components.Pages.Auth where
 
 import Prelude
 
-import Components.UI.Hls.Core (HlsQuery, hlsComponent)
-import Components.UI.Hls.Core as HC
+import Components.UI.AuthForm (AuthFormOutput, authForm)
+import Components.UI.Hls.Core (HlsQuery)
 import Components.UI.PreviewContainer (PreviewContainerOutput)
-import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
-import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Type.Proxy (Proxy(..))
-import Types.Resource (UUID)
 
 type Slots = ( 
-  hlsComponent :: forall output. H.Slot HlsQuery output Int 
+  authForm :: forall query . H.Slot query AuthFormOutput Int 
 )
 
 data AuthComponentActions = HandlePreviewContainer PreviewContainerOutput
@@ -34,8 +31,7 @@ authComponent =
     
     render :: AuthState -> H.ComponentHTML AuthComponentActions Slots m
     render _ = HH.div_ [
-      HH.p [] []
-      -- HH.slot_ (Proxy :: _ "hlsComponent") 0 hlsComponent {resourceId : Just resourceId}
+      HH.slot_ (Proxy :: _ "authForm") 0 authForm []
     ]
 
     -- handleQuery :: forall state a. AuthComponentQuery a -> H.HalogenM state AuthComponentActions Slots output m (Maybe a)

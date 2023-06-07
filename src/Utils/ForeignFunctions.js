@@ -14,5 +14,21 @@ export function goToPathName(pathName) {
 
 function goToPathNameJS(pathName) {
   window.history.pushState({}, '', pathName);
+}
 
+export function getAuthFormData() {
+  let usernameInput = document.querySelector("#usernameInput").value;
+  let passwordInput = document.querySelector("#passwordInput").value;
+  return {usernameInput, passwordInput};
+}
+
+export function saveJwtPair(jwtPair) {
+  return function () {
+    return saveJwtPairJS(jwtPair);
+  }
+}
+
+export function saveJwtPairJS(jwtPair) {
+  localStorage.setItem('access', jwtPair.access);
+  localStorage.setItem('refresh', jwtPair.refresh);
 }
