@@ -1,0 +1,22 @@
+body {
+  background: #24283b;
+  color: white;
+  font-family: Georgia;
+}
+
+#videoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#navBar {
+  display: flex;
+  font-size: 35px;
+  margin-bottom: 100px;
+}
+
+.navItem {
+  margin: 0 10px;
+}

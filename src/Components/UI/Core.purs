@@ -2,6 +2,7 @@ module Components.UI.Core where
 
 import Prelude
 
+import Components.Pages.Auth (AuthState, authComponent)
 import Components.Pages.Home (HomeComponentOutput(..), homeComponent)
 import Components.Pages.Player (PlayerComponentQuery, PlayerState, playerComponent)
 import Effect.Aff.Class (class MonadAff)
@@ -15,7 +16,8 @@ import Types.State (RootState)
 
 type Slots = ( 
   homeComponent :: forall query . H.Slot query HomeComponentOutput Int,
-  playerComponent :: forall output. H.Slot PlayerComponentQuery output Int 
+  playerComponent :: forall output. H.Slot PlayerComponentQuery output Int,
+  authComponent :: forall query output. H.Slot query output Int 
 )
 
 data RootComponentActions = HandleHome HomeComponentOutput
@@ -36,6 +38,10 @@ rootComponent =
         where
           inputState = { resourceId : rId } :: PlayerState
           resultHTML = HH.div_ [HH.slot_ (Proxy :: _ "playerComponent") 4 playerComponent inputState]
+      Auth -> resultHTML
+        where
+          inputState = { } :: AuthState
+          resultHTML = HH.div_ [HH.slot_ (Proxy :: _ "authComponent") 5 authComponent inputState]
       _ -> resultHTML
         where
           resultHTML = HH.div_ [HH.slot (Proxy :: _ "homeComponent") 3 homeComponent unit HandleHome]

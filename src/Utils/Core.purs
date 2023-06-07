@@ -19,4 +19,5 @@ parsePathName pathNameStr = resultRoute
           playerResult = case innerUUID of
             Just ud -> Player $ UUID ud
             Nothing -> Home
+      ["", "app", "auth"] -> Auth
       _ -> Home
