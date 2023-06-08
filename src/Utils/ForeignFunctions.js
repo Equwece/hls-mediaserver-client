@@ -28,7 +28,13 @@ export function saveJwtPair(jwtPair) {
   }
 }
 
-export function saveJwtPairJS(jwtPair) {
+function saveJwtPairJS(jwtPair) {
   localStorage.setItem('access', jwtPair.access);
   localStorage.setItem('refresh', jwtPair.refresh);
+}
+
+export function getJwtPair() {
+  let access = localStorage.getItem('access')
+  let refresh = localStorage.getItem('refresh')
+  return {access, refresh};
 }

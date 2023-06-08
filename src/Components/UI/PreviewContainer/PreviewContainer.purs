@@ -2,12 +2,14 @@ module Components.UI.PreviewContainer where
 
 import Prelude
 
-import Affjax (get, printError)
+import Affjax (get, printError, request, defaultRequest)
+import Affjax.RequestHeader (RequestHeader(..))
 import Affjax.ResponseFormat (json)
 import Affjax.Web (driver)
 import Data.Argonaut (Json, JsonDecodeError, decodeJson, toArray)
 import Data.Array (foldl, (:))
 import Data.Either (Either(..))
+import Data.HTTP.Method (Method(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class.Console (log)
@@ -18,7 +20,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Types.Message (RootMessage(..))
 import Types.Resource (Resource, UUID, uuidToString)
-import Utils.ForeignFunctions (goToPathName)
+import Utils.ForeignFunctions (getJwtPair, goToPathName)
 
 
 data PreviewContainerActions = Initialize | Play UUID
@@ -49,7 +51,13 @@ previewContainer =
 
     -- TODO: Refactoring
     Initialize -> do
-      response <- H.liftAff $ get driver json "/v1/resources"
+      {access, refresh} <- H.liftEffect $ getJwtPair
+      let reqHeaders = [RequestHeader "Authorization" ("Bearer " <> access)] :: Array RequestHeader
+          newRequest = 
+            (defaultRequest 
+                {url = "/v1/resources", method = Left GET, responseFormat = json, headers = reqHeaders})
+      response <- H.liftAff $ request driver newRequest
+      -- response <- H.liftAff $ get driver json "/v1/resources"
       case response of
         Left err -> log $ printError err 
         Right resp -> do

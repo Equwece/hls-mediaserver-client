@@ -23,7 +23,7 @@ import Types.Resource (Resource, UUID, uuidToString)
 import Utils.ForeignFunctions (JwtPair, getAuthFormData, goToPathName, saveJwtPair)
 
 
-data AuthFormActions = Initialize |  SubmitAuthForm
+data AuthFormActions = SubmitAuthForm
 data AuthFormOutput = SendRoot RootMessage
 data FormEvents = InputUsername | InputPass
 
@@ -34,7 +34,7 @@ authForm =
   H.mkComponent {
     initialState,
     render,
-    eval: H.mkEval H.defaultEval { handleAction = handleAction, initialize = Just Initialize}
+    eval: H.mkEval H.defaultEval { handleAction = handleAction}
   }
   where
   initialState _ = [] :: Array Resource
@@ -51,15 +51,7 @@ authForm =
     HH.p [HP.id "authFormButton", onSubmitEvent] [HH.text "Submit"]
   ]
     where
-      -- onUsernameInputEvent = HE.onInput \_ -> (InputToForm InputUsername)
-      -- onPassInputEvent = HE.onInput \_ -> (InputToForm InputPass)
       onSubmitEvent = HE.onClick \_ -> SubmitAuthForm
-    -- where
-    --   wrapResourceToDiv {resourceId, resourceTitle, resourceType, isSegmented} = res
-    --     where
-    --       onClickEvent = HE.onClick \_ -> Play resourceId
-    --       res = HH.div [HP.classes [HH.ClassName "resPreview"], onClickEvent] <<< (\el -> el:[]) <<< HH.text <<< show $ resourceTitle
-    --   resourceListHtml = map wrapResourceToDiv resourceList
 
   handleAction = case _ of
     SubmitAuthForm -> do
@@ -75,30 +67,7 @@ authForm =
             Left err -> log $ show err
             Right rJson -> H.liftEffect $ saveJwtPair rJson
                
-               
       H.modify_ identity
     -- Play rId -> do
     --   H.liftEffect <<< goToPathName $ "/app/player/" <> uuidToString rId
     --   H.raise (SendRoot $ Played rId)
-
-    -- TODO: Refactoring
-    Initialize -> do
-      response <- H.liftAff $ get driver json "/v1/resources"
-      case response of
-        Left err -> log $ printError err 
-        Right resp -> do
-          let resList = decodeJson resp.body :: Either JsonDecodeError Json
-          case resList of
-              Left err -> log $ show err
-              Right rList -> do
-                let maybeJsonArr = toArray rList
-                case maybeJsonArr of
-                    Nothing -> pure unit
-                    Just jsonElems -> do
-                        let eitherResourceArr = map decodeJson jsonElems :: Array (Either JsonDecodeError Resource)
-                            extractResource acc (Left _) = acc
-                            extractResource acc (Right el) = el : acc
-                            resourceList = foldl extractResource [] eitherResourceArr
-                            isResourceFragmented {isSegmented} = isSegmented 
-                        H.modify_ \_ -> resourceList
-

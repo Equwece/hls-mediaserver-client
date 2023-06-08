@@ -13,3 +13,4 @@ foreign import getPathName :: Effect String
 foreign import getAuthFormData :: Effect FormData
 foreign import goToPathName :: String -> Effect Unit
 foreign import saveJwtPair :: JwtPair -> Effect Unit
+foreign import getJwtPair :: Effect JwtPair

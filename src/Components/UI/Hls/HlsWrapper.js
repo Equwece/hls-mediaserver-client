@@ -9,14 +9,22 @@ export function initHls(videoSrc) {
 function initHlsJS(apiVideoPath) {
   const video = document.getElementById('video');
   const videoSrc = `http://${location.host}/${apiVideoPath}`
-  if (Hls.isSupported()) {
-    let hls = new Hls();
-    hls.loadSource(videoSrc);
-    hls.attachMedia(video);
-    video.play();
-  }
-  else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = videoSrc;
+  const accessToken = localStorage.getItem('access')
+  if (accessToken) {
+    const hlsConfig = {
+      xhrSetup: function(xhr, url) {
+        xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`)
+      }
+    }
+    if (Hls.isSupported()) {
+      let hls = new Hls(hlsConfig);
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+      video.play();
+    }
+    else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSrc;
+    }
   }
 }
 
